@@ -176,7 +176,7 @@ def load_sensor_readings(ti) -> None:
                 site TEXT NOT NULL,
                 temperature_c NUMERIC(6, 2) NOT NULL,
                 humidity_pct NUMERIC(6, 2) NOT NULL,
-                status TEXT NOT NULL,
+                status TEXT NOT NULL, 
                 recorded_at TIMESTAMPTZ NOT NULL
             );
             """
@@ -312,6 +312,12 @@ with DAG(
         python_callable=load_daily_sensor_stats,
     )
 
+    trigger_downstream_dag = TriggerDagRunOperator(
+        task_id="trigger_sensor_quality_and_mart",
+        trigger_dag_id="sensor_quality_and_mart",
+        wait_for_completion=False,
+    )
 
-    extract_task >> transform_task >> load_sensor_readings_task >> load_daily_sensor_stats_task
+
+    extract_task >> transform_task >> load_sensor_readings_task >> load_daily_sensor_stats_task >> trigger_downstream_dag
 

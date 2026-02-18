@@ -175,7 +175,7 @@ def load_sensor_readings(ti) -> None:
                 sensor_id TEXT NOT NULL,
                 site TEXT NOT NULL,
                 temperature_c NUMERIC(6, 2) NOT NULL,
-                humidity_pct NUMERIC(6, 2) NOT NULL,s
+                humidity_pct NUMERIC(6, 2) NOT NULL,
                 status TEXT NOT NULL,
                 recorded_at TIMESTAMPTZ NOT NULL
             );
@@ -193,12 +193,12 @@ def load_sensor_readings(ti) -> None:
                     reading.get("site"),  # Standort.
                     float(reading.get("temperature_c", 0)),  # Temperatur.
                     float(reading.get("humidity_pct", 0)),  # Feuchte.
-                    (
-                        float(reading.get("battery_v"))  # Batteriespannung, falls gueltig.
-                        if reading.get("battery_v") is not None
-                        and pd.notna(reading.get("battery_v"))
-                        else None  # Sonst SQL-NULL.
-                    ),
+                    #(
+                    #    float(reading.get("battery_v"))  # Batteriespannung, falls gueltig.
+                    #    if reading.get("battery_v") is not None
+                    #    and pd.notna(reading.get("battery_v"))
+                    #    else None  # Sonst SQL-NULL.
+                    #),
                     reading.get("status", "ok"),  # Status mit Default.
                     _parse_dt(reading.get("recorded_at")),  # UTC-Zeitstempel.
                 )
@@ -210,7 +210,7 @@ def load_sensor_readings(ti) -> None:
                 cur,
                 """
                 INSERT INTO analytics.sensor_readings_fact
-                    (reading_id, sensor_id, site, temperature_c, humidity_pct, battery_v, status, recorded_at)
+                    (reading_id, sensor_id, site, temperature_c, humidity_pct, status, recorded_at)
                 VALUES %s
                 ON CONFLICT (reading_id) DO UPDATE SET
                     sensor_id = EXCLUDED.sensor_id,

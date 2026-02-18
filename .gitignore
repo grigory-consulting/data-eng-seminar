@@ -1,0 +1,4 @@
+airflow/logs/
+
+apache_spark/notebooks/data/
+apache_spark/notebooks/tutorial_output/
